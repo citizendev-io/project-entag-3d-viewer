@@ -21,19 +21,19 @@ function App() {
         const urn = "YOUR_MODEL_URN"; // Replace with a Base64 encoded URN
         Autodesk.Viewing.Document.load(
           `urn:${urn}`,
-          (doc) => {
+          (doc: { getRoot: () => { (): any; new(): any; getDefaultGeometry: { (): any; new(): any; }; }; }) => {
             const defaultViewable = doc.getRoot().getDefaultGeometry();
             viewer.loadDocumentNode(doc, defaultViewable);
 
             // Add logic for Explode functionality
             const explodeButton = document.getElementById("explode");
             let explodeState = false;
-            explodeButton.addEventListener("click", () => {
+            explodeButton?.addEventListener("click", () => {
               explodeState = !explodeState;
               viewer.explode(explodeState ? 1 : 0); // Adjust the explode intensity
             });
           },
-          (err) => console.error("Error loading model: ", err)
+          (err: any) => console.error("Error loading model: ", err)
         );
       });
     };
