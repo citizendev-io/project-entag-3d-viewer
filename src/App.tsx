@@ -20,12 +20,12 @@ function App() {
         const viewer = new Autodesk.Viewing.GuiViewer3D(viewerDiv, {});
         viewer.start();
 
-        const decodedUrn = decodeURIComponent(urn || "");
-        console.log(decodedUrn);
-        
+        // const decodedUrn = decodeURIComponent(urn || "");
+        // console.log(decodedUrn);
+
         // Load default model
         Autodesk.Viewing.Document.load(
-          `urn:${btoa(decodedUrn)}`,
+          `urn:${btoa(urn || "")}`,
           (doc: {
             getRoot: () => {
               (): any;
