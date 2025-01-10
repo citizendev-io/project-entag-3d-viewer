@@ -1,5 +1,6 @@
 :root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  /* font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif; */
+  font-family: "Akshar", serif;
   line-height: 1.5;
   font-weight: 400;
 
@@ -66,4 +67,11 @@ button:focus-visible {
   button {
     background-color: #f9f9f9;
   }
+}
+
+#btn-upload-file:disabled {
+  background-color: #495465 !important; /* Light gray to indicate disabled state */
+  cursor: not-allowed;   /* Change the cursor to indicate unavailability */
+  opacity: 0.8;          /* Optional: Make it semi-transparent */
+  border: 1px solid #aaa; /* Optional: Dim the border */
 }

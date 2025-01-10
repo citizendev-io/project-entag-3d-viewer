@@ -3,12 +3,9 @@ import "./App.css";
 
 function App() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
-  // const [uploadUrl, setUploadUrl] = useState<string>("");
   const [accessToken, setAccessToken] = useState<string>("");
   const [objectId, setObjectId] = useState<string>("");
-  // const [isViewerReady, setIsViewerReady] = useState<boolean>(false);
   const [urn, setUrn] = useState<string>("");
-  // const [bucketKey, setBucketKey] = useState<string>("");
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -325,19 +322,48 @@ function App() {
 
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="file-input">Choose a file:</label>
-          <input type="file" id="file-input" onChange={handleFileChange} />
+      <form
+        onSubmit={handleSubmit}
+        style={{
+          position: "absolute",
+          top: 10,
+          left: 10,
+          zIndex: 99, // Ensure form is on top of the viewer
+          background: "#000000", // Optional: To ensure form stands out if overlapping
+          padding: "10px",
+          boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+          borderRadius: "12px",
+        }}
+      >
+        <div className="c">
+          <input
+            required
+            type="file"
+            id="file-input"
+            onChange={handleFileChange}
+          />
         </div>
         {selectedFile && <p>Selected File: {selectedFile.name}</p>}
-        <button type="submit">Upload</button>
+        <button
+          id="btn-upload-file"
+          type="submit"
+          style={{
+            backgroundColor: "#036d35",
+            color: "#FFFFFF",
+            padding: "12px 20px",
+            fontSize: "14px",
+            fontWeight: 600,
+          }}
+          disabled={!selectedFile}
+        >
+          Upload
+        </button>
       </form>
       <div
         id="viewer"
         style={{
           width: "100%",
-          height: "90vh",
+          height: "100vh",
           background: "#f1f1f1",
           position: "absolute",
         }}
