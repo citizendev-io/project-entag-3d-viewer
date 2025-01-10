@@ -6,6 +6,7 @@ function App() {
   const [accessToken, setAccessToken] = useState<string>("");
   const [objectId, setObjectId] = useState<string>("");
   const [urn, setUrn] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
@@ -13,26 +14,31 @@ function App() {
     }
   };
 
-  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
-    const bucketKey = await createBucket();
-    const signedUrlResponse = await obtainSignedUrl(bucketKey);
-    const isUploaded = await uploadFile(signedUrlResponse.urls[0]);
-    console.log("calling uploading file...", isUploaded);
-    const finalizingUploadResponse = await finalizeUpload(
-      bucketKey,
-      signedUrlResponse.uploadKey
-    );
-    console.log("calling finalizing...", finalizingUploadResponse);
-    const encodedFileURN = btoa(finalizingUploadResponse.objectId);
-    const fileObjectKey = finalizingUploadResponse.objectKey;
-    const translationResponse = await startTranslation(
-      encodedFileURN,
-      fileObjectKey
-    );
-    console.log("calling translation job...", translationResponse);
-  };
+  // const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+  //   try {
+  //     event.preventDefault();
+  //     setIsLoading(true);
+  //     const bucketKey = await createBucket();
+  //     const signedUrlResponse = await obtainSignedUrl(bucketKey);
+  //     const isUploaded = await uploadFile(signedUrlResponse.urls[0]);
+  //     console.log("calling uploading file...", isUploaded);
+  //     const finalizingUploadResponse = await finalizeUpload(
+  //       bucketKey,
+  //       signedUrlResponse.uploadKey
+  //     );
+  //     console.log("calling finalizing...", finalizingUploadResponse);
+  //     const encodedFileURN = btoa(finalizingUploadResponse.objectId);
+  //     const fileObjectKey = finalizingUploadResponse.objectKey;
+  //     const translationResponse = await startTranslation(
+  //       encodedFileURN,
+  //       fileObjectKey
+  //     );
+  //     console.log("calling translation job...", translationResponse);
+  //   } catch (error) {
+  //     setIsLoading(false);
+  //     console.error(error);
+  //   }
+  // };
 
   const fetchAccessToken = async () => {
     try {
@@ -304,6 +310,7 @@ function App() {
           (err: unknown) => console.error("Error loading model: ", err)
         );
       });
+      setIsLoading(false);
     };
     if (urn) {
       const pollingTranslationJob = setInterval(async () => {
@@ -320,10 +327,39 @@ function App() {
     // return ()=>{clearInterval(pollingTranslationJob)};
   }, [urn]);
 
+  useEffect(() => {
+    const handleSubmit = async () => {
+      try {
+        setIsLoading(true);
+        const bucketKey = await createBucket();
+        const signedUrlResponse = await obtainSignedUrl(bucketKey);
+        const isUploaded = await uploadFile(signedUrlResponse.urls[0]);
+        console.log("calling uploading file...", isUploaded);
+        const finalizingUploadResponse = await finalizeUpload(
+          bucketKey,
+          signedUrlResponse.uploadKey
+        );
+        console.log("calling finalizing...", finalizingUploadResponse);
+        const encodedFileURN = btoa(finalizingUploadResponse.objectId);
+        const fileObjectKey = finalizingUploadResponse.objectKey;
+        const translationResponse = await startTranslation(
+          encodedFileURN,
+          fileObjectKey
+        );
+        console.log("calling translation job...", translationResponse);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    if (selectedFile) {
+      handleSubmit();
+    }
+  }, [selectedFile]);
+
   return (
     <>
       <form
-        onSubmit={handleSubmit}
+        // onSubmit={handleSubmit}
         style={{
           position: "absolute",
           top: 10,
@@ -344,7 +380,7 @@ function App() {
           />
         </div>
         {selectedFile && <p>Selected File: {selectedFile.name}</p>}
-        <button
+        {/* <button
           id="btn-upload-file"
           type="submit"
           style={{
@@ -357,7 +393,7 @@ function App() {
           disabled={!selectedFile}
         >
           Upload
-        </button>
+        </button> */}
       </form>
       <div
         id="viewer"
@@ -367,7 +403,24 @@ function App() {
           background: "#f1f1f1",
           position: "absolute",
         }}
-      ></div>
+      >
+        {isLoading && (
+          <div
+            style={{
+              margin: "20px auto",
+              position: "absolute",
+              left: "40%",
+              top: "40%",
+              width: "400px",
+              height: "400px",
+              border: "4px solid #f3f3f3", // Light gray
+              borderTop: "4px solid #036d35", // Blue
+              borderRadius: "50%",
+              animation: "spin 1s linear infinite",
+            }}
+          ></div>
+        )}
+      </div>
     </>
   );
 }
