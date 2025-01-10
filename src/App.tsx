@@ -1,13 +1,273 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import "./App.css";
 
 function App() {
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const accessToken = params.get("access-token");
-    const urn = params.get("urn");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  // const [uploadUrl, setUploadUrl] = useState<string>("");
+  const [accessToken, setAccessToken] = useState<string>("");
+  const [objectId, setObjectId] = useState<string>("");
+  // const [isViewerReady, setIsViewerReady] = useState<boolean>(false);
+  const [urn, setUrn] = useState<string>("");
+  // const [bucketKey, setBucketKey] = useState<string>("");
 
-    // Initialize the Autodesk Viewer
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setSelectedFile(event.target.files[0]);
+    }
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    const bucketKey = await createBucket();
+    const signedUrlResponse = await obtainSignedUrl(bucketKey);
+    const isUploaded = await uploadFile(signedUrlResponse.urls[0]);
+    console.log("calling uploading file...", isUploaded);
+    const finalizingUploadResponse = await finalizeUpload(
+      bucketKey,
+      signedUrlResponse.uploadKey
+    );
+    console.log("calling finalizing...", finalizingUploadResponse);
+    const encodedFileURN = btoa(finalizingUploadResponse.objectId);
+    const fileObjectKey = finalizingUploadResponse.objectKey;
+    const translationResponse = await startTranslation(
+      encodedFileURN,
+      fileObjectKey
+    );
+    console.log("calling translation job...", translationResponse);
+  };
+
+  const fetchAccessToken = async () => {
+    try {
+      const response = await fetch(
+        "https://developer.api.autodesk.com/authentication/v2/token",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            Authorization:
+              "Basic QndRWWMwTmhnYTdRS1pCdzVncFVoVHR1YU9WaXJBNUZGQ1ZNbDFqQ0MwSHFKc0lBOlNZdjc1ejFXQ0NBTXUxbWtYRGxhUnZJMDJUNDY4Mk5QaFNNNml5WWNzczZzejBTd0NwM24wYW02cWplZUc5MW4=",
+          },
+          body: new URLSearchParams({
+            grant_type: "client_credentials",
+            scope:
+              "code:all data:write data:read bucket:create bucket:delete bucket:read",
+          }).toString(),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      // console.log("Access token received:", data.access_token);
+      setAccessToken(data.access_token);
+      return data.access_token;
+    } catch (error) {
+      console.error("Error fetching access token:", error);
+    }
+  };
+
+  const createBucket = async () => {
+    try {
+      const bucketData = {
+        bucketKey: Date.now().toString(), // Replace with actual bucket key
+        access: "full",
+        policyKey: "transient",
+      };
+      const response = await fetch(
+        "https://developer.api.autodesk.com/oss/v2/buckets",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${accessToken}`,
+          },
+          body: JSON.stringify(bucketData),
+        }
+      );
+      console.log("response", response);
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      // setBucketKey(data.bucketKey);
+      console.log("Bucket created:", data);
+      return data.bucketKey;
+    } catch (error) {
+      console.error("Error creating bucket:", error);
+    }
+  };
+
+  const obtainSignedUrl = async (_bucketKey: string) => {
+    try {
+      const response = await fetch(
+        `https://developer.api.autodesk.com/oss/v2/buckets/${_bucketKey}/objects/${selectedFile?.name}/signeds3upload?minutesExpiration=10`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      console.log("response of obtaining signedUrl", response);
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      // setUploadUrl(data.urls[0]);
+      console.log("Signed URL obtained:", data);
+      return data;
+    } catch (error) {
+      console.error("Error creating bucket:", error);
+    }
+  };
+
+  const uploadFile = async (url: string) => {
+    if (!selectedFile) {
+      console.error("No file selected");
+      return false;
+    }
+    try {
+      console.log("upload url:", url);
+      const arrayBuffer = await selectedFile?.arrayBuffer(); // Read the file content
+      const binaryData = new Uint8Array(arrayBuffer); // Convert ArrayBuffer to Uint8Array
+      const response = await fetch(url, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/octet-stream",
+        },
+        body: binaryData,
+      });
+
+      if (!response.ok) {
+        console.error(response);
+        throw new Error("File upload failed");
+      }
+
+      console.log("Upload successful:", response);
+      return response;
+    } catch (error) {
+      console.error("Error uploading file:", error);
+    }
+  };
+
+  const finalizeUpload = async (_bucketKey: string, uploadKey: string) => {
+    try {
+      const response = await fetch(
+        `https://developer.api.autodesk.com/oss/v2/buckets/${_bucketKey}/objects/${selectedFile?.name}/signeds3upload`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            uploadKey: uploadKey,
+          }),
+        }
+      );
+      console.log("response of finalizing upload", response);
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      setObjectId(data.objectId);
+      console.log("Finalize upload:", data);
+      return data;
+    } catch (error) {
+      console.error("Error finalizing upload:", error);
+    }
+  };
+
+  const startTranslation = async (
+    ossEncodedSourceFileURN: string,
+    ossSourceFileObjectKey: string
+  ) => {
+    try {
+      const response = await fetch(
+        "https://developer.api.autodesk.com/modelderivative/v2/designdata/job",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            input: {
+              urn: ossEncodedSourceFileURN,
+              rootFilename: ossSourceFileObjectKey,
+              compressedUrn: false,
+            },
+            output: {
+              destination: {
+                region: "us",
+              },
+              formats: [
+                {
+                  type: "svf2",
+                  views: ["2d", "3d"],
+                },
+              ],
+            },
+          }),
+        }
+      );
+      console.log("response of translation", response);
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      setUrn(data.urn);
+      console.log("Translation job:", data);
+      return data;
+    } catch (error) {
+      console.error("Error translating:", error);
+    }
+  };
+
+  const checkTranslationStatus = async (urn: string) => {
+    try {
+      const response = await fetch(
+        `https://developer.api.autodesk.com/modelderivative/v2/designdata/${urn}/manifest`,
+        {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+      console.log("response of check translation status", response);
+
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
+      }
+
+      const data = await response.json();
+      console.log("Check status of translation job:", data);
+      return data;
+    } catch (error) {
+      console.error("Error checking status of translation job:", error);
+    }
+  };
+
+  useEffect(() => {
+    const initializeApp = async () => {
+      await fetchAccessToken();
+    };
+    initializeApp();
+  }, []);
+
+  useEffect(() => {
     const initializeViewer = async () => {
       const viewerDiv = document.getElementById("viewer");
       const options = {
@@ -25,12 +285,12 @@ function App() {
 
         // Load default model
         Autodesk.Viewing.Document.load(
-          `urn:${btoa(urn || "")}`,
+          `urn:${btoa(objectId || "")}`,
           (doc: {
             getRoot: () => {
-              (): any;
-              new (): any;
-              getDefaultGeometry: { (): any; new (): any };
+              (): unknown;
+              new (): unknown;
+              getDefaultGeometry: { (): unknown; new (): unknown };
             };
           }) => {
             const defaultViewable = doc.getRoot().getDefaultGeometry();
@@ -44,19 +304,45 @@ function App() {
               viewer.explode(explodeState ? 1 : 0); // Adjust the explode intensity
             });
           },
-          (err: any) => console.error("Error loading model: ", err)
+          (err: unknown) => console.error("Error loading model: ", err)
         );
       });
     };
+    if (urn) {
+      const pollingTranslationJob = setInterval(async () => {
+        const checkStatusResponse = await checkTranslationStatus(urn);
+        console.log("polling...", checkStatusResponse);
 
-    initializeViewer();
-  }, []);
+        if (checkStatusResponse.hasThumbnail === "true") {
+          console.log("interval cleared!");
+          initializeViewer();
+          clearInterval(pollingTranslationJob);
+        }
+      }, 2000);
+    }
+    // return ()=>{clearInterval(pollingTranslationJob)};
+  }, [urn]);
 
   return (
-    <div
-      id="viewer"
-      style={{ width: "100%", height: "50vh", background: "#f1f1f1" }}
-    ></div>
+    <>
+      <form onSubmit={handleSubmit}>
+        <div>
+          <label htmlFor="file-input">Choose a file:</label>
+          <input type="file" id="file-input" onChange={handleFileChange} />
+        </div>
+        {selectedFile && <p>Selected File: {selectedFile.name}</p>}
+        <button type="submit">Upload</button>
+      </form>
+      <div
+        id="viewer"
+        style={{
+          width: "100%",
+          height: "90vh",
+          background: "#f1f1f1",
+          position: "absolute",
+        }}
+      ></div>
+    </>
   );
 }
 
