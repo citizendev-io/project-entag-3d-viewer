@@ -14,32 +14,6 @@ function App() {
     }
   };
 
-  // const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-  //   try {
-  //     event.preventDefault();
-  //     setIsLoading(true);
-  //     const bucketKey = await createBucket();
-  //     const signedUrlResponse = await obtainSignedUrl(bucketKey);
-  //     const isUploaded = await uploadFile(signedUrlResponse.urls[0]);
-  //     console.log("calling uploading file...", isUploaded);
-  //     const finalizingUploadResponse = await finalizeUpload(
-  //       bucketKey,
-  //       signedUrlResponse.uploadKey
-  //     );
-  //     console.log("calling finalizing...", finalizingUploadResponse);
-  //     const encodedFileURN = btoa(finalizingUploadResponse.objectId);
-  //     const fileObjectKey = finalizingUploadResponse.objectKey;
-  //     const translationResponse = await startTranslation(
-  //       encodedFileURN,
-  //       fileObjectKey
-  //     );
-  //     console.log("calling translation job...", translationResponse);
-  //   } catch (error) {
-  //     setIsLoading(false);
-  //     console.error(error);
-  //   }
-  // };
-
   const fetchAccessToken = async () => {
     try {
       const response = await fetch(
@@ -64,7 +38,6 @@ function App() {
       }
 
       const data = await response.json();
-      // console.log("Access token received:", data.access_token);
       setAccessToken(data.access_token);
       return data.access_token;
     } catch (error) {
@@ -75,7 +48,7 @@ function App() {
   const createBucket = async () => {
     try {
       const bucketData = {
-        bucketKey: Date.now().toString(), // Replace with actual bucket key
+        bucketKey: Date.now().toString(),
         access: "full",
         policyKey: "transient",
       };
@@ -97,7 +70,6 @@ function App() {
       }
 
       const data = await response.json();
-      // setBucketKey(data.bucketKey);
       console.log("Bucket created:", data);
       return data.bucketKey;
     } catch (error) {
@@ -123,7 +95,6 @@ function App() {
       }
 
       const data = await response.json();
-      // setUploadUrl(data.urls[0]);
       console.log("Signed URL obtained:", data);
       return data;
     } catch (error) {
@@ -137,9 +108,11 @@ function App() {
       return false;
     }
     try {
-      console.log("upload url:", url);
-      const arrayBuffer = await selectedFile?.arrayBuffer(); // Read the file content
-      const binaryData = new Uint8Array(arrayBuffer); // Convert ArrayBuffer to Uint8Array
+      // Read the file content
+      const arrayBuffer = await selectedFile?.arrayBuffer();
+      // Convert ArrayBuffer to Uint8Array
+      const binaryData = new Uint8Array(arrayBuffer);
+
       const response = await fetch(url, {
         method: "PUT",
         headers: {
@@ -283,9 +256,6 @@ function App() {
         const viewer = new Autodesk.Viewing.GuiViewer3D(viewerDiv, {});
         viewer.start();
 
-        // const decodedUrn = decodeURIComponent(urn || "");
-        // console.log(decodedUrn);
-
         // Load default model
         Autodesk.Viewing.Document.load(
           `urn:${btoa(objectId || "")}`,
@@ -324,7 +294,6 @@ function App() {
         }
       }, 2000);
     }
-    // return ()=>{clearInterval(pollingTranslationJob)};
   }, [urn]);
 
   useEffect(() => {
@@ -364,8 +333,8 @@ function App() {
           position: "absolute",
           top: 10,
           left: 10,
-          zIndex: 99, // Ensure form is on top of the viewer
-          background: "#000000", // Optional: To ensure form stands out if overlapping
+          zIndex: 99,
+          background: "#000000",
           padding: "10px",
           boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
           borderRadius: "12px",
@@ -380,20 +349,6 @@ function App() {
           />
         </div>
         {selectedFile && <p>Selected File: {selectedFile.name}</p>}
-        {/* <button
-          id="btn-upload-file"
-          type="submit"
-          style={{
-            backgroundColor: "#036d35",
-            color: "#FFFFFF",
-            padding: "12px 20px",
-            fontSize: "14px",
-            fontWeight: 600,
-          }}
-          disabled={!selectedFile}
-        >
-          Upload
-        </button> */}
       </form>
       <div
         id="viewer"
@@ -413,8 +368,8 @@ function App() {
               top: "40%",
               width: "400px",
               height: "400px",
-              border: "4px solid #f3f3f3", // Light gray
-              borderTop: "4px solid #036d35", // Blue
+              border: "4px solid #f3f3f3",
+              borderTop: "4px solid #036d35",
               borderRadius: "50%",
               animation: "spin 1s linear infinite",
             }}
