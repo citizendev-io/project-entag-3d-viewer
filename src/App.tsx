@@ -1,5 +1,8 @@
+'use client'
+
 import { useEffect, useState } from "react";
 import "./App.css";
+import { fetchFileAndConvert } from "./helpers/download";
 
 function App() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -8,11 +11,20 @@ function App() {
   const [urn, setUrn] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files.length > 0) {
-      setSelectedFile(event.target.files[0]);
-    }
-  };
+  // const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  //   if (event.target.files && event.target.files.length > 0) {
+  //     setSelectedFile(event.target.files[0]);
+  //   }
+  // };
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(window.location.search);
+    const fetchData = async () => {
+      const file = await fetchFileAndConvert(searchParams.get("url") || "");
+      setSelectedFile(file);
+    };
+    fetchData();
+  }, []);
 
   const fetchAccessToken = async () => {
     try {
@@ -262,8 +274,8 @@ function App() {
           (doc: {
             getRoot: () => {
               (): unknown;
-              new (): unknown;
-              getDefaultGeometry: { (): unknown; new (): unknown };
+              new(): unknown;
+              getDefaultGeometry: { (): unknown; new(): unknown };
             };
           }) => {
             const defaultViewable = doc.getRoot().getDefaultGeometry();
@@ -327,7 +339,7 @@ function App() {
 
   return (
     <>
-      <form
+      {/* <form
         // onSubmit={handleSubmit}
         style={{
           position: "absolute",
@@ -349,7 +361,7 @@ function App() {
           />
         </div>
         {selectedFile && <p>Selected File: {selectedFile.name}</p>}
-      </form>
+      </form> */}
       <div
         id="viewer"
         style={{
