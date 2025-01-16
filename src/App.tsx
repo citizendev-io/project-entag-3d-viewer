@@ -11,21 +11,6 @@ function App() {
   const [urn, setUrn] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  // const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   if (event.target.files && event.target.files.length > 0) {
-  //     setSelectedFile(event.target.files[0]);
-  //   }
-  // };
-
-  useEffect(() => {
-    const searchParams = new URLSearchParams(window.location.search);
-    const fetchData = async () => {
-      const file = await fetchFileAndConvert(searchParams.get("url") || "");
-      setSelectedFile(file);
-    };
-    fetchData();
-  }, []);
-
   const fetchAccessToken = async () => {
     try {
       const response = await fetch(
@@ -56,6 +41,29 @@ function App() {
       console.error("Error fetching access token:", error);
     }
   };
+
+  useEffect(() => {
+    const initializeApp = async () => {
+      const token = await fetchAccessToken();
+      setAccessToken(token); // This updates accessToken state
+    };
+    initializeApp();
+
+    console.log(
+      "Retrieved access token: ", accessToken
+    )
+  }, []); // Fetch token only once on mount
+
+  useEffect(() => {
+    if (accessToken) {
+      const searchParams = new URLSearchParams(window.location.search);
+      const fetchData = async () => {
+        const file = await fetchFileAndConvert(searchParams.get("url") || "");
+        setSelectedFile(file);
+      };
+      fetchData();
+    }
+  }, [accessToken]);
 
   const createBucket = async () => {
     try {
@@ -247,13 +255,6 @@ function App() {
       console.error("Error checking status of translation job:", error);
     }
   };
-
-  useEffect(() => {
-    const initializeApp = async () => {
-      await fetchAccessToken();
-    };
-    initializeApp();
-  }, []);
 
   useEffect(() => {
     const initializeViewer = async () => {
