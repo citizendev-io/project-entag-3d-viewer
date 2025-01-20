@@ -2,6 +2,7 @@
 // Imports
 import * as R0M0 from "@api/root/src/api/autodesk/upload/route.ts";
 import * as R0M1 from "@api/root/src/api/bubble-trigger/index.ts";
+import * as R0M2 from "@api/root/src/api/test/index.ts";
 import * as configure from "@api/configure";
 
 export const routeBase = "/api";
@@ -102,6 +103,54 @@ const internal  = [
         path       : "/api/bubble-trigger/",
         url        : "/api/bubble-trigger/",
         cb         : R0M1.DELETE,
+      },
+  R0M2.default && {
+        source     : "src/api/test/index.ts?fn=default",
+        method     : "use",
+        route      : "/test/",
+        path       : "/api/test/",
+        url        : "/api/test/",
+        cb         : R0M2.default,
+      },
+  R0M2.GET && {
+        source     : "src/api/test/index.ts?fn=GET",
+        method     : "get",
+        route      : "/test/",
+        path       : "/api/test/",
+        url        : "/api/test/",
+        cb         : R0M2.GET,
+      },
+  R0M2.PUT && {
+        source     : "src/api/test/index.ts?fn=PUT",
+        method     : "put",
+        route      : "/test/",
+        path       : "/api/test/",
+        url        : "/api/test/",
+        cb         : R0M2.PUT,
+      },
+  R0M2.POST && {
+        source     : "src/api/test/index.ts?fn=POST",
+        method     : "post",
+        route      : "/test/",
+        path       : "/api/test/",
+        url        : "/api/test/",
+        cb         : R0M2.POST,
+      },
+  R0M2.PATCH && {
+        source     : "src/api/test/index.ts?fn=PATCH",
+        method     : "patch",
+        route      : "/test/",
+        path       : "/api/test/",
+        url        : "/api/test/",
+        cb         : R0M2.PATCH,
+      },
+  R0M2.DELETE && {
+        source     : "src/api/test/index.ts?fn=DELETE",
+        method     : "delete",
+        route      : "/test/",
+        path       : "/api/test/",
+        url        : "/api/test/",
+        cb         : R0M2.DELETE,
       }
 ].filter(it => it);
 
