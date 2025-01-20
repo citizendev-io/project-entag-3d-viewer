@@ -3,6 +3,8 @@ import react from '@vitejs/plugin-react'
 import apiRoutes from "vite-plugin-api-routes";
 import tsconfigPaths from "vite-tsconfig-paths";
 
+import cdn from 'vite-plugin-cdn-import'
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -10,7 +12,10 @@ export default defineConfig({
     apiRoutes({
       // Configuration options go here
     }),
-    tsconfigPaths()
+    tsconfigPaths(),
+    cdn({
+      modules: ['react', 'react-dom'],
+    }),
   ],
   server: {
     headers: {
