@@ -9,13 +9,13 @@ import cdn from 'vite-plugin-cdn-import'
 export default defineConfig({
   plugins: [
     react(),
+    cdn({
+      modules: ['react', 'react-dom', 'react-router-dom'],
+    }),
     apiRoutes({
       // Configuration options go here
     }),
     tsconfigPaths(),
-    cdn({
-      modules: ['react', 'react-dom', 'react-router-dom'],
-    }),
   ],
   server: {
     headers: {
