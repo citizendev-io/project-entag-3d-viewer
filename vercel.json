@@ -5,8 +5,8 @@
       "destination": "/"
     },
     {
-      "source": "/api(.*)",
-      "destination": "/api"
+      "source": "/api/:match*",
+      "destination": "https://entag.project.citizendev.io/api/:match*"
     }
   ]
 }
