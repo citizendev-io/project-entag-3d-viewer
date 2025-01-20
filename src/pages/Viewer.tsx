@@ -381,7 +381,7 @@ function Viewer() {
         }
       }, 2000);
     }
-  }, [accessToken]);
+  }, [accessToken, checkTranslationStatus, objectId, part_id, requested_urn, selectedFile?.name, urn, version]);
 
   useEffect(() => {
     const handleSubmit = async () => {

@@ -14,7 +14,7 @@ export default defineConfig({
     }),
     tsconfigPaths(),
     cdn({
-      modules: ['react', 'react-dom'],
+      modules: ['react', 'react-dom', 'react-router-dom'],
     }),
   ],
   server: {
