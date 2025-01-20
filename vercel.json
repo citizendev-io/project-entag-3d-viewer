@@ -1,8 +1,12 @@
 {
   "rewrites": [
     {
-      "source": "/api/:match*",
-      "destination": "https://entag.project.citizendev.io/api/:match*"
+      "source": "/api/(.*)",
+      "destination": "https://entag.project.citizendev.io/api/$1"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/"
     }
   ]
 }
