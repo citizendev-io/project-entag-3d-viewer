@@ -64,13 +64,15 @@ function Viewer() {
 
   useEffect(() => {
     if (accessToken) {
-      const fetchData = async () => {
-        const file = await fetchFileAndConvert(url || "");
-        setSelectedFile(file);
-      };
-      fetchData();
+      if (!requested_urn) {
+        const fetchData = async () => {
+          const file = await fetchFileAndConvert(url || "");
+          setSelectedFile(file);
+        };
+        fetchData();
+      }
     }
-  }, [accessToken, url]);
+  }, [accessToken, requested_urn, url]);
 
   const createBucket = useCallback(async () => {
     try {
@@ -280,7 +282,7 @@ function Viewer() {
           viewer.start();
 
           Autodesk.Viewing.Document.load(
-            requested_urn,
+            `urn:${requested_urn}`,
             (doc: {
               getRoot: () => {
                 (): unknown;
@@ -298,6 +300,10 @@ function Viewer() {
                 explodeState = !explodeState;
                 viewer.explode(explodeState ? 1 : 0); // Adjust the explode intensity
               });
+
+              viewer.addEventListener(Autodesk.Viewing.GEOMETRY_LOADED_EVENT, function () {
+                viewer.utilities.fitToView();
+              })
             },
             (err: unknown) => console.error("Error loading model: ", err)
           )
@@ -350,13 +356,18 @@ function Viewer() {
         });
       }
 
-
       setIsLoading(false);
     };
     if (urn) {
       const pollingTranslationJob = setInterval(async () => {
         if (requested_urn) {
+
+          const checkStatusResponse = await checkTranslationStatus(requested_urn);
+          console.log("polling...", checkStatusResponse);
+
           initializeViewer();
+
+          clearInterval(pollingTranslationJob);
         } else {
           const checkStatusResponse = await checkTranslationStatus(urn);
           console.log("polling...", checkStatusResponse);
@@ -370,7 +381,7 @@ function Viewer() {
         }
       }, 2000);
     }
-  }, [accessToken, checkTranslationStatus, objectId, part_id, requested_urn, selectedFile?.name, urn, version]);
+  }, [accessToken]);
 
   useEffect(() => {
     const handleSubmit = async () => {
@@ -397,8 +408,10 @@ function Viewer() {
       }
     };
 
-    if (selectedFile) {
-      handleSubmit();
+    if (!requested_urn) {
+      if (selectedFile) {
+        handleSubmit();
+      }
     }
   }, [createBucket, finalizeUpload, obtainSignedUrl, requested_urn, selectedFile, startTranslation, uploadFile]);
 
