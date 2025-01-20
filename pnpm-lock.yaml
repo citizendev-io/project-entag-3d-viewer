@@ -35,9 +35,6 @@ importers:
       react-router-dom:
         specifier: ^7.1.2
         version: 7.1.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      vite-plugin-api-routes:
-        specifier: 1.2.0-beta
-        version: 1.2.0-beta(vite@5.4.11(@types/node@22.10.6))
     devDependencies:
       '@eslint/js':
         specifier: ^9.9.0
@@ -84,6 +81,9 @@ importers:
       vite:
         specifier: ^5.4.1
         version: 5.4.11(@types/node@22.10.6)
+      vite-plugin-api-routes:
+        specifier: 1.2.0-beta
+        version: 1.2.0-beta(vite@5.4.11(@types/node@22.10.6))
       vite-plugin-cdn-import:
         specifier: ^1.0.1
         version: 1.0.1(rollup@4.30.1)(vite@5.4.11(@types/node@22.10.6))
