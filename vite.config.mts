@@ -3,15 +3,10 @@ import react from '@vitejs/plugin-react'
 import apiRoutes from "vite-plugin-api-routes";
 import tsconfigPaths from "vite-tsconfig-paths";
 
-import cdn from 'vite-plugin-cdn-import'
-
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     react(),
-    cdn({
-      modules: ['react', 'react-dom', 'react-router-dom'],
-    }),
     apiRoutes({
       // Configuration options go here
     }),
@@ -30,15 +25,15 @@ export default defineConfig({
     //     rewrite: (path) => path.replace(/^\/api/, '') // Rewrite the URL path if needed
     //   },
     // },
-  },
-  build: {
-    rollupOptions: {
-      external: ["react", "react-router", "react-router-dom"],
-      output: {
-        globals: {
-          react: "React",
-        },
-      },
-    },
   }
+  // build: {
+  //   rollupOptions: {
+  //     external: ["react", "react-router", "react-router-dom"],
+  //     output: {
+  //       globals: {
+  //         react: "React",
+  //       },
+  //     },
+  //   },
+  // }
 })
