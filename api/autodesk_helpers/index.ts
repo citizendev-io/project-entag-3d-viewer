@@ -91,7 +91,7 @@ const finalizeUpload = async (_bucketKey: string, uploadKey: string, accessToken
     const response = await fetch(
       `https://developer.api.autodesk.com/oss/v2/buckets/${_bucketKey}/objects/${selectedFile?.name}/signeds3upload`,
       {
-        method: "POST",
+        method: "GET",
         headers: {
           Authorization: `Bearer ${accessToken}`,
           "Content-Type": "application/json",
