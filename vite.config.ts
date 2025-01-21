@@ -1,13 +1,11 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import vercel from 'vite-plugin-vercel'
 import tsconfigPaths from "vite-tsconfig-paths"
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     react(),
-    vercel(),
     tsconfigPaths()
   ],
   server: {
@@ -15,10 +13,5 @@ export default defineConfig({
       'X-Frame-Options': 'ALLOWALL',
       'Content-Security-Policy': "frame-ancestors 'self' *",
     }
-  },
-  vercel: {
-    redirects: [
-      { "source": "/((?!api/.*).*)", "destination": "/" }
-    ],
   }
 })
