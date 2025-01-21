@@ -2,6 +2,10 @@
 import axios from 'axios';
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
+export const config = {
+  runtime: 'nodejs', // this is a pre-requisite
+};
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === "POST") {
     const { body } = req;
