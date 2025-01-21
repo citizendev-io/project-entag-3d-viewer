@@ -60,7 +60,7 @@ const createBucket = async (accessToken: string) => {
   }
 };
 
-const obtainSignedUrl = async (_bucketKey: string, accessToken: string) => {
+const obtainSignedUrl = async (_bucketKey: string, accessToken: string, selectedFile: File) => {
   try {
     const response = await fetch(
       `https://developer.api.autodesk.com/oss/v2/buckets/${_bucketKey}/objects/${selectedFile?.name}/signeds3upload?minutesExpiration=10`,
