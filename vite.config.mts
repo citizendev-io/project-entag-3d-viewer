@@ -18,15 +18,8 @@ export default defineConfig({
   },
   vercel: {
     defaultMaxDuration: 20,
-  },
-  build: {
-    rollupOptions: {
-      external: ["react", "react-router", "react-router-dom"],
-      output: {
-        globals: {
-          react: "React",
-        },
-      },
-    },
+    redirects: [
+      { source: "/(.*)", destination: "/", permanent: false },
+    ],
   }
 })
