@@ -1,10 +1,6 @@
 {
   "rewrites": [
     {
-      "source": "/api/(.*)",
-      "destination": "https://entag.project.citizendev.io/$1"
-    },
-    {
       "source": "/(.*)",
       "destination": "/"
     }
