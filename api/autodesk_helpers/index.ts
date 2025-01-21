@@ -87,7 +87,7 @@ const obtainSignedUrl = async (_bucketKey: string, accessToken: string, selected
 
 const finalizeUpload = async (_bucketKey: string, uploadKey: string, accessToken: string, selectedFile: File) => {
   try {
-    console.log("Upload access Token: ", accessToken);
+    console.log("Upload Key: ", uploadKey);
     const response = await fetch(
       `https://developer.api.autodesk.com/oss/v2/buckets/${_bucketKey}/objects/${selectedFile?.name}/signeds3upload`,
       {
