@@ -1,4 +1,4 @@
-import { createBucket, fetchAccessToken, finalizeUpload, obtainSignedUrl, startTranslation } from "./autodesk_helpers";
+import { createBucket, fetchAccessToken, finalizeUpload, obtainSignedUrl, startTranslation, uploadFile } from "./autodesk_helpers";
 import { fetchFileAndConvert } from "./autodesk_helpers/download";
 
 export async function GET(req: Request) {
@@ -12,6 +12,7 @@ export async function GET(req: Request) {
   const bucket = await createBucket(accessToken);
   const file = await fetchFileAndConvert(url as string);
   const signedUrl = await obtainSignedUrl(bucket, accessToken, file);
+  await uploadFile(signedUrl[0].urls, accessToken);
   const finalizingUploadResponse = await finalizeUpload(
     bucket, signedUrl.uploadKey, accessToken, file
   );

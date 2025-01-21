@@ -85,6 +85,37 @@ const obtainSignedUrl = async (_bucketKey: string, accessToken: string, selected
   }
 };
 
+const uploadFile = async (url: string, selectedFile: File) => {
+  if (!selectedFile) {
+    console.error("No file selected");
+    return false;
+  }
+  try {
+    // Read the file content
+    const arrayBuffer = await selectedFile?.arrayBuffer();
+    // Convert ArrayBuffer to Uint8Array
+    const binaryData = new Uint8Array(arrayBuffer);
+
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/octet-stream",
+      },
+      body: binaryData,
+    });
+
+    if (!response.ok) {
+      console.error(response);
+      throw new Error("File upload failed");
+    }
+
+    console.log("Upload successful:", response);
+    return response;
+  } catch (error) {
+    console.error("Error uploading file:", error);
+  }
+};
+
 const finalizeUpload = async (_bucketKey: string, uploadKey: string, accessToken: string, selectedFile: File) => {
   try {
     const response = await fetch(
@@ -167,6 +198,7 @@ export {
   fetchAccessToken,
   createBucket,
   obtainSignedUrl,
+  uploadFile,
   finalizeUpload,
   startTranslation
 }
