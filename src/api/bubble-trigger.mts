@@ -6,7 +6,7 @@ export const config = {
   runtime: 'nodejs', // this is a pre-requisite
 };
 
-export function GET(request: Request) {
+export function GET() {
   return new Response(`Hello from ${process.env.VERCEL_REGION}`);
 }
 
