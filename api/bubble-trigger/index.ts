@@ -1,8 +1,8 @@
 // import axios from 'axios';
 import axios from 'axios';
-import { Request, Response } from 'express';
+import type { VercelRequest, VercelResponse } from '@vercel/node'
 
-export default async function handler(req: Request, res: Response) {
+export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === "POST") {
     const { body } = req;
 
@@ -33,13 +33,3 @@ export default async function handler(req: Request, res: Response) {
     );
   }
 }
-
-// export default async function handler(req: Request, res: Response) {
-//   if (req.method === "GET") {
-//     return GET(req, res);
-//   } else if (req.method === "POST") {
-//     return POST(req, res);
-//   } else {
-//     res.status(405).json({ error: "Method Not Allowed" });
-//   }
-// }
