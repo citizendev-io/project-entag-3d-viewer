@@ -60,7 +60,33 @@ const createBucket = async (accessToken: string) => {
   }
 };
 
+const obtainSignedUrl = async (_bucketKey: string, accessToken: string) => {
+  try {
+    const response = await fetch(
+      `https://developer.api.autodesk.com/oss/v2/buckets/${_bucketKey}/objects/${selectedFile?.name}/signeds3upload?minutesExpiration=10`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+    console.log("response of obtaining signedUrl", response);
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log("Signed URL obtained:", data);
+    return data;
+  } catch (error) {
+    console.error("Error creating bucket:", error);
+  }
+};
+
 export {
   fetchAccessToken,
-  createBucket
+  createBucket,
+  obtainSignedUrl
 }
