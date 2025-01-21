@@ -16,8 +16,17 @@ export default defineConfig({
   },
   vercel: {
     defaultMaxDuration: 20,
-    redirects: [
-      { source: "/(.*)", destination: "/index.html", permanent: true },
-    ],
+    config: {
+      routes: [
+        {
+          src: "/(.*)",
+          dest: "/",
+        },
+        {
+          src: "/viewer",
+          dest: "/viewer"
+        }
+      ]
+    }
   }
 })
