@@ -38,3 +38,13 @@ export const POST = async (req: Request, res: Response) => {
     }
   );
 }
+
+export default async function handler(req: Request, res: Response) {
+  if (req.method === "GET") {
+    return GET(req, res);
+  } else if (req.method === "POST") {
+    return POST(req, res);
+  } else {
+    res.status(405).json({ error: "Method Not Allowed" });
+  }
+}
