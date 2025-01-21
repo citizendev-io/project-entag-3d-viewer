@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@generouted/react-router':
+        specifier: ^1.19.10
+        version: 1.19.10(react-router-dom@7.1.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)(vite@5.4.11(@types/node@22.10.6))
       '@vercel/node':
         specifier: ^5.0.2
         version: 5.0.2(rollup@4.30.1)
@@ -555,6 +558,13 @@ packages:
   '@fastify/busboy@2.1.1':
     resolution: {integrity: sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==}
     engines: {node: '>=14'}
+
+  '@generouted/react-router@1.19.10':
+    resolution: {integrity: sha512-t+skXxGZNqrhl/tDnXgrE0a4exfkKfg1kmsirs7H/BKQxBq3m5a/OEY98pAi2PEgGFN1t8u4/dBEQh2FUA8Wcg==}
+    peerDependencies:
+      react: '>=18'
+      react-router-dom: '>=6'
+      vite: '>=4'
 
   '@humanfs/core@0.19.1':
     resolution: {integrity: sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA==}
@@ -1805,6 +1815,11 @@ packages:
 
   function-bind@1.1.2:
     resolution: {integrity: sha512-7XHNxH7qX9xG5mIwxkhumTox/MIRNcOgDrxWsMt2pAr23WHp6MrRlN7FBSFpCpr+oVO0F744iUgR82nJMfG2SA==}
+
+  generouted@1.19.10:
+    resolution: {integrity: sha512-qwCDdVMwN4+C3eTlwxiQrDfr+6URY5T87WzEIeUxhZ2zLVzwvnAMYWAAAgnr4tJA+47L+KvHKr4BYn50VQxsnw==}
+    peerDependencies:
+      vite: '>=3'
 
   gensync@1.0.0-beta.2:
     resolution: {integrity: sha512-3hN7NaskYvMDLQY55gnW3NQ+mesEAepTqlg+VEbj7zzqEMBVNhzcGYYeqFo/TlYz6eQiFcp1HcsCZO+nGgS8zg==}
@@ -3070,6 +3085,14 @@ snapshots:
 
   '@fastify/busboy@2.1.1': {}
 
+  '@generouted/react-router@1.19.10(react-router-dom@7.1.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)(vite@5.4.11(@types/node@22.10.6))':
+    dependencies:
+      fast-glob: 3.3.3
+      generouted: 1.19.10(vite@5.4.11(@types/node@22.10.6))
+      react: 18.3.1
+      react-router-dom: 7.1.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      vite: 5.4.11(@types/node@22.10.6)
+
   '@humanfs/core@0.19.1': {}
 
   '@humanfs/node@0.16.6':
@@ -4307,6 +4330,10 @@ snapshots:
     optional: true
 
   function-bind@1.1.2: {}
+
+  generouted@1.19.10(vite@5.4.11(@types/node@22.10.6)):
+    dependencies:
+      vite: 5.4.11(@types/node@22.10.6)
 
   gensync@1.0.0-beta.2: {}
 
