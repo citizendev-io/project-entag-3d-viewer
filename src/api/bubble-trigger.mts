@@ -2,15 +2,15 @@
 import axios from 'axios';
 import type { VercelRequest, VercelResponse } from '@vercel/node'
 
-export const config = {
-  runtime: 'nodejs', // this is a pre-requisite
-};
+// export const config = {
+//   runtime: 'nodejs', // this is a pre-requisite
+// };
 
 export function GET() {
   return new Response(`Hello from ${process.env.VERCEL_REGION}`);
 }
 
-export default async function handler(req: VercelRequest, res: VercelResponse) {
+export async function POST(req: VercelRequest, res: VercelResponse) {
   if (req.method === "POST") {
     const { body } = req;
 
