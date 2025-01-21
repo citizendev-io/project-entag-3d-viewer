@@ -1,1 +1,0 @@
-{"root":["./src/App.tsx","./src/global.d.ts","./src/main.tsx","./src/vite-end.d.ts","./src/vite-env.d.ts","./src/helpers/base64converter.ts","./src/helpers/download.ts","./src/pages/viewer/index.tsx"],"version":"5.7.3"}
