@@ -19,7 +19,7 @@ export default defineConfig({
   vercel: {
     defaultMaxDuration: 20,
     redirects: [
-      { source: "/(.*)", destination: "/", permanent: false },
+      { source: "/(.*)", destination: "/index.html", permanent: false },
     ],
   }
 })
