@@ -14,7 +14,7 @@ export async function POST(req: Request, res: Response) {
   // const { body } = req;
 
   // const { part_id, version, image, urn } = await req.text();
-  const rawBody = await req.text()
+  const rawBody = JSON.parse(await req.text())
 
   // const imageSubmit = await axios.post(
   //   `https://entag-10502.bubbleapps.io/version-${version}/api/1.1/wf/create_3d_preview`,
