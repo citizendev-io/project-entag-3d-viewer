@@ -6,6 +6,9 @@ export async function GET(req: Request) {
   const url = searchParams.get("url");
 
   const accessToken = await fetchAccessToken();
+
+  console.log("Access token:", accessToken);
+
   const bucket = await createBucket(accessToken);
   const file = await fetchFileAndConvert(url as string);
   const signedUrl = await obtainSignedUrl(bucket, accessToken, file);
