@@ -85,8 +85,88 @@ const obtainSignedUrl = async (_bucketKey: string, accessToken: string, selected
   }
 };
 
+const finalizeUpload = async (_bucketKey: string, uploadKey: string, accessToken: string, selectedFile: File) => {
+  try {
+    const response = await fetch(
+      `https://developer.api.autodesk.com/oss/v2/buckets/${_bucketKey}/objects/${selectedFile?.name}/signeds3upload`,
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          uploadKey: uploadKey,
+        }),
+      }
+    );
+    console.log("response of finalizing upload", response);
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log("Finalize upload:", data);
+
+    return data.objectId;
+  } catch (error) {
+    console.error("Error finalizing upload:", error);
+  }
+};
+
+const startTranslation = async (
+  ossEncodedSourceFileURN: string,
+  ossSourceFileObjectKey: string,
+  accessToken: string
+) => {
+  try {
+    const response = await fetch(
+      "https://developer.api.autodesk.com/modelderivative/v2/designdata/job",
+      {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          input: {
+            urn: ossEncodedSourceFileURN,
+            rootFilename: ossSourceFileObjectKey,
+            compressedUrn: false,
+          },
+          output: {
+            destination: {
+              region: "us",
+            },
+            formats: [
+              {
+                type: "svf2",
+                views: ["2d", "3d"],
+              },
+            ],
+          },
+        }),
+      }
+    );
+    console.log("response of translation", response);
+
+    if (!response.ok) {
+      throw new Error(`Error: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log("Translation job:", data);
+    return data;
+  } catch (error) {
+    console.error("Error translating:", error);
+  }
+};
+
 export {
   fetchAccessToken,
   createBucket,
-  obtainSignedUrl
+  obtainSignedUrl,
+  finalizeUpload,
+  startTranslation
 }
