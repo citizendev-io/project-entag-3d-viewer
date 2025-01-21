@@ -1,9 +1,17 @@
 {
-  "routes": [
-    { "handle": "filesystem" },
+  "rewrites": [
     {
       "src": "/((?!api/.*).*)",
       "dest": "/index.html"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "/api/$1"
     }
-  ]
+  ],
+  "functions": {
+    "api/*.ts": {
+      "runtime": "nodejs18.x"
+    }
+  }
 }
