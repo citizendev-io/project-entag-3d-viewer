@@ -46,7 +46,6 @@ function Viewer() {
       }
 
       const data = await response.json();
-      setAccessToken(data.access_token);
       return data.access_token;
     } catch (error) {
       console.error("Error fetching access token:", error);
@@ -267,22 +266,43 @@ function Viewer() {
 
   useEffect(() => {
     if (!accessToken || !urn) return;
+
     const initializeViewer = async () => {
+      // Load Autodesk Viewer
       const viewerDiv = document.getElementById("viewer");
-      const options = {
-        env: "AutodeskProduction",
-        accessToken: accessToken,
-      };
       if (!viewerDiv) {
         console.error("Viewer div not found");
         return;
       }
-      const viewer = new Autodesk.Viewing.GuiViewer3D(viewerDiv, {});
-      // Load Autodesk Viewer
+
+      const viewer = new Autodesk.Viewing.GuiViewer3D(viewerDiv!, {});
+
+      const options = {
+        env: "AutodeskProduction",
+        accessToken: accessToken,
+      };
 
       if (requested_urn) {
         Autodesk.Viewing.Initializer(options, () => {
           viewer.start();
+
+          viewer.getScreenShot(500, 500, async function (blobURL: string) {
+            await axios.post(
+              process.env.NODE_ENV === 'production'
+                ? 'https://entag.project.citizendev.io/api/bubble-trigger'
+                : 'http://localhost:5173/api/bubble-trigger',
+              {
+                version: version,
+                part_id: part_id,
+                image: {
+                  filename: selectedFile?.name.split(".")[0] + ".png",
+                  contents: (await convertImageToBase64(blobURL)).replace("data:image/png;base64,", ""),
+                  attach_to: part_id
+                },
+                urn
+              }
+            )
+          })
 
           Autodesk.Viewing.Document.load(
             `urn:${requested_urn}`,
@@ -325,23 +345,23 @@ function Viewer() {
 
               viewer.addEventListener(Autodesk.Viewing.GEOMETRY_LOADED_EVENT, function () {
                 viewer.fitToView();
-                viewer.getScreenShot(500, 500, async function (blobURL: string) {
-                  await axios.post(
-                    process.env.NODE_ENV === 'production'
-                      ? 'https://entag.project.citizendev.io/api/bubble-trigger'
-                      : 'http://localhost:5173/api/bubble-trigger',
-                    {
-                      version: version,
-                      part_id: part_id,
-                      image: {
-                        filename: selectedFile?.name.split(".")[0] + ".png",
-                        contents: (await convertImageToBase64(blobURL)).replace("data:image/png;base64,", ""),
-                        attach_to: part_id
-                      },
-                      urn
-                    }
-                  )
-                })
+                // viewer.getScreenShot(500, 500, async function (blobURL: string) {
+                //   await axios.post(
+                //     process.env.NODE_ENV === 'production'
+                //       ? 'https://entag.project.citizendev.io/api/bubble-trigger'
+                //       : 'http://localhost:3000/api/bubble-trigger',
+                //     {
+                //       version: version,
+                //       part_id: part_id,
+                //       image: {
+                //         filename: selectedFile?.name.split(".")[0] + ".png",
+                //         contents: (await convertImageToBase64(blobURL)).replace("data:image/png;base64,", ""),
+                //         attach_to: part_id
+                //       },
+                //       urn
+                //     }
+                //   )
+                // })
               });
             },
             (err: unknown) => console.error("Error loading model: ", err)

@@ -17,7 +17,9 @@ export default defineConfig({
     },
     proxy: {
       '/api': {
-        target: 'http://localhost:3000',
+        target: process.env.NODE_ENV === 'production'
+          ? 'https://entag.project.citizendev.io/api'
+          : 'http://localhost:5173/api',
         changeOrigin: true,
         rewrite: (path) => path.replace(/^\/api/, '')
       }

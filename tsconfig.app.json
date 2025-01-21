@@ -24,5 +24,5 @@
       "@/*": ["./src/*"] // enables us to use @components/MyComponent
     }
   },
-  "include": ["src"]
+  "include": ["src", "api"]
 }
