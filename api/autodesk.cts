@@ -12,7 +12,7 @@ export async function GET(req: Request) {
   const bucket = await createBucket(accessToken);
   const file = await fetchFileAndConvert(url as string);
   const signedUrl = await obtainSignedUrl(bucket, accessToken, file);
-  await uploadFile(signedUrl[0].urls, accessToken);
+  await uploadFile(signedUrl.urls[0], accessToken);
   const finalizingUploadResponse = await finalizeUpload(
     bucket, signedUrl.uploadKey, accessToken, file
   );
