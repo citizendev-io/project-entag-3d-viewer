@@ -2,7 +2,7 @@
 // import { fetchFileAndConvert } from "./autodesk_helpers/download";
 
 export async function GET(req: Request) {
-  const rawRes = await req.text()
+  const { searchParams } = new URL(req.url);
   // console.log(await req.text())
   // const { url } = JSON.parse(await req.text())
 
@@ -17,5 +17,5 @@ export async function GET(req: Request) {
 
   // const urn = await startTranslation(encodedFileURN, fileObjectKey, accessToken);
 
-  return new Response(rawRes);
+  return new Response(searchParams);
 }
