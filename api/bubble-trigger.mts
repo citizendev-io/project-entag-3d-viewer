@@ -10,8 +10,8 @@ export function GET() {
   return new Response(`Hello from ${process.env.VERCEL_REGION}`);
 }
 
-export async function POST(req: Request, res: Response) {
-  // const { body } = req;
+export async function POST(req: Request) {
+  console.log('req', req)
 
   const { part_id, version, image, urn } = JSON.parse(await req.text())
 
