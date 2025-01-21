@@ -1,4 +1,4 @@
-import { fetchAccessToken } from "@/helpers/autodesk";
+import { fetchAccessToken } from "./autodesk_helpers";
 
 export async function GET() {
   const accessToken = await fetchAccessToken();
