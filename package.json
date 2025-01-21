@@ -25,6 +25,7 @@
   "devDependencies": {
     "@eslint/js": "^9.9.0",
     "@types/express": "^5.0.0",
+    "@types/forge-viewer": "^7.89.1",
     "@types/multer": "^1.4.12",
     "@types/next": "^9.0.0",
     "@types/node": "^22.10.5",

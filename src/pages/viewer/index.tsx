@@ -1,7 +1,6 @@
 'use client'
 
 import { useCallback, useEffect, useState } from "react";
-import "@/App.css";
 import { fetchFileAndConvert } from "@/helpers/download"
 import axios from "axios";
 import { convertImageToBase64 } from "@/helpers/base64converter";
@@ -274,6 +273,10 @@ function Viewer() {
         env: "AutodeskProduction",
         accessToken: accessToken,
       };
+      if (!viewerDiv) {
+        console.error("Viewer div not found");
+        return;
+      }
       const viewer = new Autodesk.Viewing.GuiViewer3D(viewerDiv, {});
       // Load Autodesk Viewer
 
@@ -283,13 +286,7 @@ function Viewer() {
 
           Autodesk.Viewing.Document.load(
             `urn:${requested_urn}`,
-            (doc: {
-              getRoot: () => {
-                (): unknown;
-                new(): unknown;
-                getDefaultGeometry: { (): unknown; new(): unknown };
-              };
-            }) => {
+            (doc: Autodesk.Viewing.Document) => {
               const defaultViewable = doc.getRoot().getDefaultGeometry();
               viewer.loadDocumentNode(doc, defaultViewable);
 
@@ -302,7 +299,7 @@ function Viewer() {
               });
 
               viewer.addEventListener(Autodesk.Viewing.GEOMETRY_LOADED_EVENT, function () {
-                viewer.utilities.fitToView();
+                viewer.fitToView();
               })
             },
             (err: unknown) => console.error("Error loading model: ", err)
@@ -314,13 +311,7 @@ function Viewer() {
 
           Autodesk.Viewing.Document.load(
             `urn:${btoa(objectId || "")}`,
-            (doc: {
-              getRoot: () => {
-                (): unknown;
-                new(): unknown;
-                getDefaultGeometry: { (): unknown; new(): unknown };
-              };
-            }) => {
+            (doc: Autodesk.Viewing.Document) => {
               const defaultViewable = doc.getRoot().getDefaultGeometry();
               viewer.loadDocumentNode(doc, defaultViewable);
 
@@ -333,7 +324,7 @@ function Viewer() {
               });
 
               viewer.addEventListener(Autodesk.Viewing.GEOMETRY_LOADED_EVENT, function () {
-                viewer.utilities.fitToView();
+                viewer.fitToView();
                 viewer.getScreenShot(500, 500, async function (blobURL: string) {
                   await axios.post(
                     process.env.NODE_ENV === 'production'
