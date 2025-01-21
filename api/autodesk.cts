@@ -16,5 +16,5 @@ export async function GET(req: Request) {
 
   const urn = await startTranslation(encodedFileURN, fileObjectKey, accessToken);
 
-  return new Response(searchParams);
+  return new Response(urn);
 }
