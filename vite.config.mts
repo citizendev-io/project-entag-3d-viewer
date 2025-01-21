@@ -16,15 +16,7 @@ export default defineConfig({
     headers: {
       'X-Frame-Options': 'ALLOWALL',
       'Content-Security-Policy': "frame-ancestors 'self' *",
-    },
-    proxy: {
-      '/api': {
-        target: 'https://entag.project.citizendev.io', // The target API server
-        changeOrigin: true,  // Change the origin of the request (for virtual hosted sites)
-        secure: true,        // If using HTTPS
-        rewrite: (path) => path.replace(/^\/api/, '') // Rewrite the URL path if needed
-      },
-    },
+    }
   }
   // build: {
   //   rollupOptions: {

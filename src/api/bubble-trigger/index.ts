@@ -2,13 +2,6 @@
 import axios from 'axios';
 import { Request, Response } from 'express';
 
-export const GET = async (req: Request, res: Response) => {
-  const { query } = req;
-  console.log(query);
-
-  res.status(200).json({ message: 'Hello from the API!' });
-}
-
 export const POST = async (req: Request, res: Response) => {
   const { body } = req;
 
@@ -39,12 +32,12 @@ export const POST = async (req: Request, res: Response) => {
   );
 }
 
-export default async function handler(req: Request, res: Response) {
-  if (req.method === "GET") {
-    return GET(req, res);
-  } else if (req.method === "POST") {
-    return POST(req, res);
-  } else {
-    res.status(405).json({ error: "Method Not Allowed" });
-  }
-}
+// export default async function handler(req: Request, res: Response) {
+//   if (req.method === "GET") {
+//     return GET(req, res);
+//   } else if (req.method === "POST") {
+//     return POST(req, res);
+//   } else {
+//     res.status(405).json({ error: "Method Not Allowed" });
+//   }
+// }
