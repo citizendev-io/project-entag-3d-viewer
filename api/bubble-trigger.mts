@@ -15,7 +15,7 @@ export async function POST(req: VercelRequest, res: VercelResponse) {
 
   const { part_id, version, image, urn } = body;
 
-  console.log(body)
+  console.log(await req.body)
 
   const imageSubmit = await axios.post(
     `https://entag-10502.bubbleapps.io/version-${version}/api/1.1/wf/create_3d_preview`,
