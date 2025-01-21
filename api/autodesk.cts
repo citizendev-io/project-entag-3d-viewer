@@ -2,6 +2,7 @@ import { createBucket, fetchAccessToken, finalizeUpload, obtainSignedUrl, startT
 import { fetchFileAndConvert } from "./autodesk_helpers/download";
 
 export async function GET(req: Request) {
+  console.log(await req.text())
   const { url } = JSON.parse(await req.text())
 
   const accessToken = await fetchAccessToken();
