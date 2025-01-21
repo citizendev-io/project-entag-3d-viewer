@@ -6,6 +6,10 @@ export const config = {
   runtime: 'nodejs', // this is a pre-requisite
 };
 
+export function GET(request: Request) {
+  return new Response(`Hello from ${process.env.VERCEL_REGION}`);
+}
+
 export default async function handler(req: VercelRequest, res: VercelResponse) {
   if (req.method === "POST") {
     const { body } = req;
