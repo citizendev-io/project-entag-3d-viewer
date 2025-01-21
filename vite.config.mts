@@ -1,6 +1,5 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import apiRoutes from "vite-plugin-api-routes";
 import tsconfigPaths from "vite-tsconfig-paths";
 import vitePluginVercelApi from 'vite-plugin-vercel-api';
 
@@ -8,13 +7,10 @@ import vitePluginVercelApi from 'vite-plugin-vercel-api';
 export default defineConfig({
   plugins: [
     react(),
-    apiRoutes({
-      // Configuration options go here
-    }),
     tsconfigPaths(),
     vitePluginVercelApi(
       {
-        apiDir: '/src/api'
+        apiDir: 'api'
       }
     )
   ],
