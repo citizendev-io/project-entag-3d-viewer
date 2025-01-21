@@ -336,7 +336,9 @@ function Viewer() {
                 viewer.utilities.fitToView();
                 viewer.getScreenShot(500, 500, async function (blobURL: string) {
                   await axios.post(
-                    "/api/bubble-trigger",
+                    process.env.NODE_ENV === 'production'
+                      ? 'https://entag.project.citizendev.io/api/bubble-trigger'
+                      : 'http://localhost:5173/api/bubble-trigger',
                     {
                       version: version,
                       part_id: part_id,
