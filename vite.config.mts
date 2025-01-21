@@ -19,15 +19,15 @@ export default defineConfig({
   vercel: {
     defaultMaxDuration: 20,
     cleanUrls: true,
+  },
+  build: {
+    rollupOptions: {
+      external: ["react", "react-router", "react-router-dom"],
+      output: {
+        globals: {
+          react: "React",
+        },
+      },
+    },
   }
-  // build: {
-  //   rollupOptions: {
-  //     external: ["react", "react-router", "react-router-dom"],
-  //     output: {
-  //       globals: {
-  //         react: "React",
-  //       },
-  //     },
-  //   },
-  // }
 })
