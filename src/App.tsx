@@ -1,14 +1,12 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom"
-
-import routes from 'route-views'
-
-const router = createBrowserRouter(routes)
+import { Route, Routes } from "react-router-dom";
+import Viewer from "@/pages/viewer";
 
 function App() {
   return (
-    <RouterProvider
-      router={router}
-    />
+    <Routes>
+      <Route path="/" element={<div>Welcome to the Home page</div>} />
+      <Route path="/viewer" element={<Viewer />} />
+    </Routes>
   );
 }
 

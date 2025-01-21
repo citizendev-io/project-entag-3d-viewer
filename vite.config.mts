@@ -1,15 +1,15 @@
 import { defineConfig } from 'vite'
+import vercel from 'vite-plugin-vercel'
 import react from '@vitejs/plugin-react'
 import tsconfigPaths from "vite-tsconfig-paths"
-import vercel from 'vite-plugin-vercel'
-import router from 'vite-plugin-react-views'
+import withReactRouter from 'vite-plugin-next-react-router';
 
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
     react(),
-    router(),
     vercel(),
+    withReactRouter(),
     tsconfigPaths()
   ],
   server: {
@@ -20,7 +20,6 @@ export default defineConfig({
   },
   vercel: {
     defaultMaxDuration: 20,
-    cleanUrls: true,
   },
   build: {
     rollupOptions: {
