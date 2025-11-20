@@ -31,7 +31,7 @@ function Viewer() {
           headers: {
             "Content-Type": "application/x-www-form-urlencoded",
             Authorization:
-              "Basic QndRWWMwTmhnYTdRS1pCdzVncFVoVHR1YU9WaXJBNUZGQ1ZNbDFqQ0MwSHFKc0lBOlNZdjc1ejFXQ0NBTXUxbWtYRGxhUnZJMDJUNDY4Mk5QaFNNNml5WWNzczZzejBTd0NwM24wYW02cWplZUc5MW4=",
+              "Basic ZU9lQk1LdEFiNUthRlM4RFRzYVMwejRSVDRPdjhKbW9od2Q5TzE2aVAwM0dOdVpqOm03a1dGdjdOZDZXN2ZDUHRQd0FPNjBMNlRhZFZjYjJTQVpWdUZ0ZTl1VmFEdWJXYVl6WmozNE5QT0FyamwwMkI=",
           },
           body: new URLSearchParams({
             grant_type: "client_credentials",
