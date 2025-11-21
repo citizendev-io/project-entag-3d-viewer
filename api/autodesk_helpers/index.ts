@@ -143,7 +143,7 @@ const finalizeUpload = async (_bucketKey: string, uploadKey: string, accessToken
     const data = await response.json();
     console.log("Finalize upload:", data);
 
-    return data.objectId;
+    return data;
   } catch (error) {
     console.error("Error finalizing upload:", error);
   }
