@@ -1,6 +1,5 @@
-import { createBucket, fetchAccessToken, finalizeUpload, obtainSignedUrl, startTranslation, uploadFile, getManifest, getThumbnail } from "./autodesk_helpers";
+import { createBucket, fetchAccessToken, finalizeUpload, obtainSignedUrl, startTranslation, uploadFile } from "./autodesk_helpers";
 import { fetchFileAndConvert } from "./autodesk_helpers/download";
-import axios from 'axios';
 
 export async function POST(req: Request) {
   try {
@@ -45,67 +44,12 @@ export async function POST(req: Request) {
     const urn = translationResponse.urn;
     console.log("Step 6: Starting translation completed, URN:", urn);
 
-    // Step 7: Poll for Thumbnail
-    console.log("Step 7: Polling for thumbnail started");
-    let thumbnailReady = false;
-    const maxRetries = 30; // 30 * 2s = 60s timeout
-    let retries = 0;
-
-    while (!thumbnailReady && retries < maxRetries) {
-      await new Promise(resolve => setTimeout(resolve, 2000)); // Wait 2 seconds
-      const manifest = await getManifest(urn, accessToken);
-
-      if (manifest.status === "success" || manifest.derivatives?.[0]?.children?.some((c: any) => c.role === "thumbnail")) {
-        thumbnailReady = true;
-      } else if (manifest.status === "failed") {
-        throw new Error("Translation failed");
-      }
-      retries++;
-    }
-
-    if (!thumbnailReady) {
-      throw new Error("Thumbnail generation timed out");
-    }
-    console.log("Step 7: Polling for thumbnail completed");
-
-    // Step 8: Get Thumbnail
-    console.log("Step 8: Fetching thumbnail started");
-    const thumbnailBuffer = await getThumbnail(urn, accessToken);
-    const base64Image = Buffer.from(thumbnailBuffer).toString('base64');
-    console.log("Step 8: Fetching thumbnail completed");
-
-    // Step 9: Trigger Bubble Webhook
-    console.log("Step 9: Triggering Bubble webhook started");
-    const bubblePayload = {
-      version: version,
-      part_id: part_id,
-      image: {
-        filename: `${file.name.split('.')[0]}.png`,
-        contents: base64Image,
-        attach_to: part_id
-      },
-      urn: urn
-    };
-
-    const bubbleResponse = await axios.post(
-      `https://entag-10502.bubbleapps.io/version-${version}/api/1.1/wf/create_3d_preview`,
-      {
-        part_id,
-        image: bubblePayload.image,
-        private: false,
-        version,
-        urn
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer bae073c7b9b6abf8d88992dd8fffc7c3` // This token was hardcoded in bubble-trigger.cts
-        }
-      }
-    );
-    console.log("Step 9: Triggering Bubble webhook completed", bubbleResponse.data);
-
-    return new Response(JSON.stringify({ success: true, urn, bubble_response: bubbleResponse.data }), {
+    // Return URN and access token for Bubble to handle thumbnail fetching
+    return new Response(JSON.stringify({
+      success: true,
+      urn,
+      accessToken
+    }), {
       headers: { 'Content-Type': 'application/json' }
     });
 
