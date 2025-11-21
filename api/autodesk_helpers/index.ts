@@ -1,13 +1,13 @@
-const fetchAccessToken = async () => {
+const fetchAccessToken = async (clientId: string, clientSecret: string) => {
   try {
+    const credentials = btoa(`${clientId}:${clientSecret}`);
     const response = await fetch(
       "https://developer.api.autodesk.com/authentication/v2/token",
       {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
-          Authorization:
-            "Basic ZU9lQk1LdEFiNUthRlM4RFRzYVMwejRSVDRPdjhKbW9od2Q5TzE2aVAwM0dOdVpqOm03a1dGdjdOZDZXN2ZDUHRQd0FPNjBMNlRhZFZjYjJTQVpWdUZ0ZTl1VmFEdWJXYVl6WmozNE5QT0FyamwwMkI=",
+          Authorization: `Basic ${credentials}`,
         },
         body: new URLSearchParams({
           grant_type: "client_credentials",
@@ -18,13 +18,16 @@ const fetchAccessToken = async () => {
     );
 
     if (!response.ok) {
+      console.error(`Error fetching access token: ${response.statusText}`);
       throw new Error(`Error: ${response.statusText}`);
     }
 
     const data = await response.json();
+    console.log("Access token obtained successfully");
     return data.access_token;
   } catch (error) {
     console.error("Error fetching access token:", error);
+    throw error;
   }
 };
 
@@ -175,6 +178,13 @@ const startTranslation = async (
                 type: "svf2",
                 views: ["2d", "3d"],
               },
+              {
+                type: "thumbnail",
+                advanced: {
+                  width: 400,
+                  height: 400
+                }
+              }
             ],
           },
         }),
@@ -191,6 +201,57 @@ const startTranslation = async (
     return data;
   } catch (error) {
     console.error("Error translating:", error);
+    throw error;
+  }
+};
+
+const getManifest = async (urn: string, accessToken: string) => {
+  try {
+    const response = await fetch(
+      `https://developer.api.autodesk.com/modelderivative/v2/designdata/${urn}/manifest`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Error fetching manifest: ${response.statusText}`);
+    }
+
+    const data = await response.json();
+    console.log(`Manifest status: ${data.status} - ${data.progress}`);
+    return data;
+  } catch (error) {
+    console.error("Error getting manifest:", error);
+    throw error;
+  }
+};
+
+const getThumbnail = async (urn: string, accessToken: string) => {
+  try {
+    const response = await fetch(
+      `https://developer.api.autodesk.com/modelderivative/v2/designdata/${urn}/thumbnail?width=400&height=400`,
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error(`Error fetching thumbnail: ${response.statusText}`);
+    }
+
+    const arrayBuffer = await response.arrayBuffer();
+    console.log("Thumbnail fetched successfully");
+    return arrayBuffer;
+  } catch (error) {
+    console.error("Error getting thumbnail:", error);
+    throw error;
   }
 };
 
@@ -200,5 +261,7 @@ export {
   obtainSignedUrl,
   uploadFile,
   finalizeUpload,
-  startTranslation
+  startTranslation,
+  getManifest,
+  getThumbnail
 }
