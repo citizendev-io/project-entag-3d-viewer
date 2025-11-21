@@ -66,7 +66,7 @@ const createBucket = async (accessToken: string) => {
 const obtainSignedUrl = async (_bucketKey: string, accessToken: string, selectedFile: File) => {
   try {
     const response = await fetch(
-      `https://developer.api.autodesk.com/oss/v2/buckets/${_bucketKey}/objects/${selectedFile?.name.replace(/\.[^.]+$/, '')}/signeds3upload?minutesExpiration=10`,
+      `https://developer.api.autodesk.com/oss/v2/buckets/${_bucketKey}/objects/${encodeURIComponent(selectedFile?.name)}/signeds3upload?minutesExpiration=10`,
       {
         method: "GET",
         headers: {
@@ -122,7 +122,7 @@ const uploadFile = async (url: string, selectedFile: File) => {
 const finalizeUpload = async (_bucketKey: string, uploadKey: string, accessToken: string, selectedFile: File) => {
   try {
     const response = await fetch(
-      `https://developer.api.autodesk.com/oss/v2/buckets/${_bucketKey}/objects/${selectedFile?.name.replace(/\.[^.]+$/, '')}/signeds3upload`,
+      `https://developer.api.autodesk.com/oss/v2/buckets/${_bucketKey}/objects/${encodeURIComponent(selectedFile?.name)}/signeds3upload`,
       {
         method: "POST",
         headers: {
