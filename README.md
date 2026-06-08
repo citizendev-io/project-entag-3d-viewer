@@ -1,21 +1,50 @@
-# React + TypeScript + Vite
+<!-- last-verified: 2026-05-07 -->
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+# Entag 3D Viewer
 
-While this project uses React, Vite supports many popular JS frameworks. [See all the supported frameworks](https://vitejs.dev/guide/#scaffolding-your-first-vite-project).
+Vite + React + TypeScript app for Autodesk APS upload/translation, Forge Viewer rendering, and Bubble workflow
+integration.
 
-## Deploy Your Own
+## Core Commands
 
-Deploy your own Vite project with Vercel.
+```bash
+pnpm dev
+pnpm lint
+pnpm build
+pnpm test:e2e
+```
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/vercel/vercel/tree/main/examples/vite-react&template=vite-react)
+## Viewer Guardrail Checks
 
-_Live Example: https://vite-react-example.vercel.app_
+Use this command before releases and after API-route edits:
 
-### Deploying From Your Terminal
+```bash
+pnpm test:viewer:guardrail
+```
 
-You can deploy your new Vite project with a single command from your terminal using [Vercel CLI](https://vercel.com/download):
+What it validates:
 
-```shell
-$ vercel
+1. Viewer page behavior in local bubble URL mode.
+2. Viewer URN lookup behavior and cloud fallback block UX.
+3. Direct handler-level dry-run contracts for [api/autodesk.cts](api/autodesk.cts) and
+	 [api/conversion-status.cts](api/conversion-status.cts).
+
+## Why Contract Checks Are Handler-Level
+
+In this workspace, local Vite + api-routes can intermittently return EISDIR for POST calls to /api.
+For deterministic contract coverage, [scripts/viewer-resilience-smoke.ts](scripts/viewer-resilience-smoke.ts)
+imports handlers directly.
+
+## Deploy to Production
+
+```bash
+npx vercel --prod --yes
+```
+
+After deploy, run at least one dry-run probe:
+
+```bash
+curl -X POST "https://project-entag-3d-viewer.vercel.app/api/conversion-status" \
+	-H "content-type: application/json" \
+	-d '{"dry_run":true,"viewer_status":"success","quote_status":"not_required"}'
 ```

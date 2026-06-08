@@ -19,5 +19,14 @@ export default defineConfig({
       'X-Frame-Options': 'ALLOWALL',
       'Content-Security-Policy': "frame-ancestors 'self' *",
     },
-  }
+  },
+  vercel: {
+    defaultMaxDuration: 60,
+    rewrites: [
+      { source: '/viewer', destination: '/' },
+      { source: '/viewer/(.*)', destination: '/' },
+      { source: '/embed/part', destination: '/' },
+      { source: '/embed/part/(.*)', destination: '/' },
+    ],
+  },
 })

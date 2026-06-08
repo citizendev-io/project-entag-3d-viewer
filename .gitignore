@@ -27,3 +27,6 @@ dist-ssr
 
 # VS Code Configuration
 **/.vscode/
+.vercel
+.env*.local
+.gitnexus
