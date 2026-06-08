@@ -1,10 +1,8 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "functions": {
-    "api/**/*.cts": {
-      "maxDuration": 60
-    },
-    "api/**/*.ts": {
+    "api/**/*.{ts,js,mjs,cjs,cts,mts}": {
+      "runtime": "nodejs18.x",
       "maxDuration": 60
     }
   },
